@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Finder For Twitter</title>
+    <link rel="stylesheet" href="css/jquery.dataTables.min.css">
+</head>
+
+<body>
+    </div> <span style='color:red'>Please enter your twitter handles without @</span> </div> <br><br>
+    <label>Source (Handle One)</label>
+    <input type='text' id='source' required>
+    <label>Lookup (Handle Two)</label>
+    <input type='text' id='lookup' required>
+    <input type='submit' id='getList' value='FIND'><br><br>
+    <table id="shared-connections" class="display" style="width:30%"></table>
+</body>
+
+</html>
+<script src="js/jquery-3.3.1.js"></script>
+<script src="js/jquery.dataTables.min.js"></script>
+<script>
+    const matrixFy = (arr, size) => Array.from({ length: Math.ceil(arr.length / size) }, (value, index) => arr.slice(index * size, index * size + size))
+    $(document).ready(function () {
+        $('#getList').click(() => {
+            let source = $('#source').val()
+            let lookup = $('#lookup').val()
+            let url = `http:localhost:9021/${source}/${lookup}`
+            $.get(url, (data, status, err) => {
+                if (data.count > 0) {
+                    let dataSet = matrixFy(data.data, 1)
+                    $('#shared-connections').DataTable({
+                        data: dataSet,
+                        columns: [
+                            { title: "Twitter Handle" }
+                        ]
+                    })
+                }
+                if (data.count == 0) alert(data.data)
+
+            }).fail((jqXHR, textStatus) => {
+                if (textStatus == 'error') alert(jqXHR.responseJSON.error)
+            })
+        })
+    })
+
+</script>
